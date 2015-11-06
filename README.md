@@ -8,7 +8,9 @@ Easy temperature reading
 
 ## Install
 
+coming soon...
 
 ## Usage
 
 ### Initialization
+coming soon...
