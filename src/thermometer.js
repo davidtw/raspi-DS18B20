@@ -38,13 +38,15 @@
 	}
 	
 	Thermometer.prototype.getTemperatureFromData = function(data) {
-		if(data.match(/.*t=([0-9])/g)) {
-			var temp = data.replace(/.*\s.*t=([0-9]+)/, '$1')/1000
-			temp = parseFloat(temp)
-			return Promise.resolve(temp)
-		} else {
-			throw new Error('data non conforme')
-		}
+		return this.checkCrc(data).then(function(data){
+			if(data.match(/.*t=([0-9])/g)) {
+				var temp = data.replace(/.*\s.*t=([0-9]+)/, '$1')/1000
+				temp = parseFloat(temp)
+				return Promise.resolve(temp)
+			} else {
+				throw new Error('data non conforme')
+			}
+		})
 	}
 
 	module.exports = Thermometer
