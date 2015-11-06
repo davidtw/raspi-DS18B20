@@ -25,7 +25,7 @@
 	}
 
 	Thermometer.prototype.checkCrc = function(data) {		
-		if(data.match(/.*([a-fA-F0-9]{2})\s:\scrc=([0-9]+)\sYES/g)) {
+		if(/.*([a-fA-F0-9]{2})\s:\scrc=([0-9]+)\sYES/g.test(data)) {
 			var crc = data.replace(/.*([a-fA-F0-9]{2})\s:\scrc=([0-9]+).*\n.*/gmi, '$1-$2').split('-')			
 			if(crc[0] === crc[1]) {
 				return Promise.resolve(data)
