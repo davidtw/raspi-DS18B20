@@ -24,9 +24,24 @@
 		}
 	}
 
+	Thermometer.prototype.checkCrc = function(data) {		
+		if(data.match(/.*([a-fA-F0-9]{2})\s:\scrc=([0-9]+)\sYES/g)) {
+			var crc = data.replace(/.*([a-fA-F0-9]{2})\s:\scrc=([0-9]+).*\n.*/gmi, '$1-$2').split('-')			
+			if(crc[0] === crc[1]) {
+				return Promise.resolve(data)
+			} else {
+				throw new Error('crc failed : bytes don\'t correspond')
+			}
+		} else {
+			throw new Error('crc failed : Crc = NO')
+		}
+	}
+	
 	Thermometer.prototype.getTemperatureFromData = function(data) {
 		if(data.match(/.*t=([0-9])/g)) {
-			return Promise.resolve(data.replace(/.*t=([0-9])/g, '$1')/1000)
+			var temp = data.replace(/.*\s.*t=([0-9]+)/, '$1')/1000
+			temp = parseFloat(temp)
+			return Promise.resolve(temp)
 		} else {
 			throw new Error('data non conforme')
 		}
