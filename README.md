@@ -2,13 +2,15 @@
 
 ## Current features
 
-Checksum verification
-Easy temperature reading
+* Checksum verification
+* Easy temperature reading
 
 
 ## Install
 
-coming soon...
+npm install git+https://git@github.com/davidtw/raspi-DS18B20.git
+
+npm module comming soon...
 
 ## Usage
 
