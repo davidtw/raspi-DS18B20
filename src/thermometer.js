@@ -1,7 +1,8 @@
 (function() {
     var fs = require('fs-extra-promise')
     var path = require("path")
-    var _ = require('lodash');
+    var _ = require('lodash')
+    var exec = require('child-process-promise').exec;
 
     function Thermometer(settings) {
         defaultSettings = {
@@ -46,6 +47,24 @@
             } else {
                 throw new Error('data non conforme')
             }
+        })
+    }
+
+    Thermometer.prototype.lsmod = function() {
+        return exec('lsmod')
+    }
+
+    Thermometer.prototype.checkModulesStatus = function() {
+        return this.lsmod().then(function(result){
+            var regW1GpioTest = /w1-gpio/m
+            var regW1TermTest = /w1-therm/m
+            if(!regW1GpioTest.test(result)) {
+                return Promise.reject(new Error('w1-gpio driver is not installed. Try "sudo modprobe w1-gpio" and try again'))
+            } 
+            if(!regW1TermTest.test(result)) {
+                return Promise.reject(new Error('w1-term driver is not installed. Try "sudo modprobe w1-term" and try again'))
+            } 
+            return Promise.resolve(true)
         })
     }
 

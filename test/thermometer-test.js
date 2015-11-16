@@ -45,4 +45,42 @@ describe('thermometer', function () {
             })
         })
     })
+
+    describe('checkModulesStatus', function() {
+        it('should check if the kernel modules are loaded', function() {
+            var thermometer = new Thermometer({devicePath: __dirname + '/../test-data/'})
+            thermometer.lsmod = function(){
+                var str = 'Module                  Size  Used by' + "\n"
+                str += 'w1-gpio                  1000  test' + "\n"
+                str += 'w1-therm                  1000  test' + "\n"
+                return Promise.resolve(str)
+            }
+            return thermometer.checkModulesStatus()
+        })
+    })
+
+    describe('checkModulesStatus', function() {
+        it('should fail if w1-gpio is not loaded', function() {
+            var thermometer = new Thermometer({devicePath: __dirname + '/../test-data/'})
+            thermometer.lsmod = function(){
+                var str = 'Module                  Size  Used by' + "\n"
+                str += 'w1-therm                  1000  test' + "\n"
+                return Promise.resolve(str)
+            }
+            expect(thermometer.checkModulesStatus()).to.be.rejected
+        })
+    })
+
+    describe('checkModulesStatus', function() {
+        it('should fail if w1-therm is not loaded', function() {
+            var thermometer = new Thermometer({devicePath: __dirname + '/../test-data/'})
+            thermometer.lsmod = function(){
+                var str = 'Module                  Size  Used by' + "\n"
+                str += 'w1-gpio                  1000  test' + "\n"
+                return Promise.resolve(str)
+            }
+            expect(thermometer.checkModulesStatus()).to.be.rejected
+        })
+    })
+
 })
