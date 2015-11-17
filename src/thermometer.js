@@ -12,11 +12,8 @@
         this.settings = _.assign(defaultSettings, settings)
     }
 
-    Thermometer.prototype.getThermometerData = function(devicePath) {
-        var settings = this.settings
-
-        var file = path.join(devicePath || settings.devicePath, settings.device)
-        file = path.normalize(file)
+    Thermometer.prototype.getThermometerData = function() {
+        var file = this.getDevicePath()
 
         if(fs.lstatSync(file).isFile()) {
             return fs.readFileAsync(file, 'utf8')
@@ -54,6 +51,13 @@
         return exec('lsmod')
     }
 
+    Thermometer.prototype.getDevicePath = function () {
+        var settings = this.settings
+
+        var file = path.join(settings.devicePath, settings.device)
+        return path.normalize(file)
+    }
+
     Thermometer.prototype.checkModulesStatus = function() {
         return this.lsmod().then(function(result){
             var regW1GpioTest = /w1-gpio/m
@@ -66,6 +70,16 @@
             } 
             return Promise.resolve(true)
         })
+    }
+
+    Thermometer.prototype.checkIsReadable = function() {
+        return new Promise(function(resolve, reject) {
+            var file = this.getDevicePath()
+
+            fs.lstat(file, function(err) {
+                !err ? resolve() : reject()
+            })
+        }.bind(this))
     }
 
     module.exports = Thermometer
